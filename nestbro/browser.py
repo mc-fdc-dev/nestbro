@@ -1,5 +1,6 @@
 from websockets import connect
 from httpx import AsyncClient
+from orjson import dumps
 
 import subprocess
 
@@ -28,9 +29,17 @@ class Browser:
         self.URI = "http://127.0.0.1:{}".format(port)
         self.ws = await connect(await self.get_ws_url())
 
+    async def ws_request(self, method: str, params: dict *, type: int = 1):
+        payload = {
+            "type": type,
+            "method": method,
+            "params": 
+        }
+        await self.ws.send(dumps(payload))
+
     async def request(self, method: str, path: str, **kwargs) -> dict:
         r = await self.client.request(method, self.URI + path, **kwargs)
         return r.json()
  
-    async def get_ws_url(self) -> str:
-        return await self.request("GET", "/json")[0]["webSocketDebuggerUrl"]
+    async def get_ws_url(self, page: int = 0) -> str:
+        return await self.request("GET", "/json")[page]["webSocketDebuggerUrl"]
