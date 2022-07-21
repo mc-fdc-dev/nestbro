@@ -16,6 +16,13 @@ class Browser:
         self.sandbox = sandbox
         self.client = AsyncClient()
 
+    async def __aenter__(self):
+        await self.start()
+        return self
+    
+    async def __aexit__(self, *args):
+        await self.close()
+
     async def start(self, port: int = 9222):
         args = [self.executor_path]
         if self.headless:
@@ -28,6 +35,10 @@ class Browser:
         self.process = subprocess.Popen(args)
         self.URI = "http://127.0.0.1:{}".format(port)
         self.ws = await connect(await self.get_ws_url())
+
+    async def close(self) -> None:
+        await self.ws.close()
+        self.process.close()
 
     async def ws_request(self, method: str, params: dict *, type: int = 1):
         payload = {
