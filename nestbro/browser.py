@@ -2,6 +2,8 @@ from websockets import connect
 from httpx import AsyncClient
 from orjson import dumps
 
+from .pages import Page
+
 import subprocess
 
 
@@ -34,19 +36,15 @@ class Browser:
         args.append(f"--remote-debugging-port={port}")
         self.process = subprocess.Popen(args)
         self.URI = "http://127.0.0.1:{}".format(port)
-        self.ws = await connect(await self.get_ws_url())
 
     async def close(self) -> None:
         await self.ws.close()
         self.process.close()
-
-    async def ws_request(self, method: str, params: dict *, type: int = 1):
-        payload = {
-            "type": type,
-            "method": method,
-            "params": 
-        }
-        await self.ws.send(dumps(payload))
+    
+    async def new_page(self) -> Page:
+        page = Page(await self.request("GET", "/json/new"))
+        await page.connect()
+        return page
 
     async def request(self, method: str, path: str, **kwargs) -> dict:
         r = await self.client.request(method, self.URI + path, **kwargs)
