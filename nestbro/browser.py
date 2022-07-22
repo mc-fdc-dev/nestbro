@@ -49,6 +49,3 @@ class Browser:
     async def request(self, method: str, path: str, **kwargs) -> dict:
         r = await self.client.request(method, self.URI + path, **kwargs)
         return r.json()
- 
-    async def get_ws_url(self, page: int = 0) -> str:
-        return await self.request("GET", "/json")[page]["webSocketDebuggerUrl"]
