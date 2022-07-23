@@ -6,6 +6,8 @@ from .pages import Page
 
 import subprocess
 
+from typing import List
+
 
 class Browser:
     DIVICE_URI: str | None = None
@@ -17,6 +19,7 @@ class Browser:
         self.gpu = gpu
         self.sandbox = sandbox
         self.client = AsyncClient()
+        self.pages: List[Page] = []
 
     async def __aenter__(self):
         await self.start()
@@ -44,6 +47,7 @@ class Browser:
     async def new_page(self) -> Page:
         page = Page(await self.request("GET", "/json/new"))
         await page.connect()
+        self.pages.append(page)
         return page
 
     async def request(self, method: str, path: str, **kwargs) -> dict:
