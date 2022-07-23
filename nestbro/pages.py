@@ -18,7 +18,7 @@ class Page:
     async def recv(self) -> dict:
         return dumps(await self.ws.recv())
 
-    async def close(self, *, ignore_cache: bool = False,
+    async def reload(self, *, ignore_cache: bool = False,
                     script_to_evaluate_on_load: str | None = None) -> None:
         payload = {}
         if ignore_cache:
@@ -26,6 +26,9 @@ class Page:
         if script_to_evaluate_on_load is not None:
             payload["scriptToEvaluateOnLoad"] = script_to_evaluate_on_load
         await self.request(method="Page.reload", params=payload)
+    
+    async def close(self) -> None:
+        await self.request(method="Page.close")
         
     async def screenshot(self) -> bytes:
         await self.request("Page.captureScreenshot")
