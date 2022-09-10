@@ -10,11 +10,11 @@ from typing import List
 
 
 class Browser:
-    DIVICE_URI: str | None = None
+    DEVICE_URI: str | None = None
+    process: subprocess.Popen | None = None
     def __init__(self, headless: bool = True, *, executor_path: str = "chromium-browser",
                  gpu: bool = False, sandbox: bool = False):
         self.headless = headless
-        self.process: subprocess.Popen | None = None
         self.executor_path = executor_path
         self.gpu = gpu
         self.sandbox = sandbox
@@ -22,13 +22,13 @@ class Browser:
         self.pages: List[Page] = []
 
     async def __aenter__(self):
-        await self.start()
+        await self.launch()
         return self
     
     async def __aexit__(self, *args):
         await self.close()
 
-    async def start(self, port: int = 9222):
+    async def launch(self, port: int = 9222):
         args = [self.executor_path]
         if self.headless:
             args.append("--headless")
