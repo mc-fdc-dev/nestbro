@@ -33,5 +33,3 @@ class Page:
     async def screenshot(self) -> bytes:
         await self.request("Page.captureScreenshot")
         return b64decode((await self.recv()["data"]).encode())
-
-    async def 
