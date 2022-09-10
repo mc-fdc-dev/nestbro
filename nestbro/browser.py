@@ -12,6 +12,7 @@ from typing import List
 class Browser:
     DEVICE_URI: str | None = None
     process: subprocess.Popen | None = None
+    pages: List[Page] = []
     def __init__(self, headless: bool = True, *, executor_path: str = "chromium-browser",
                  gpu: bool = False, sandbox: bool = False):
         self.headless = headless
@@ -19,7 +20,6 @@ class Browser:
         self.gpu = gpu
         self.sandbox = sandbox
         self.client = AsyncClient()
-        self.pages: List[Page] = []
 
     async def __aenter__(self):
         await self.launch()
